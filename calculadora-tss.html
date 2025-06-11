@@ -5,44 +5,93 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora TSS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+    }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      max-width: 120px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    p {
+      margin: 5px 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .box {
+      border: 1px solid #ccc;
+      padding: 24px;
+      background-color: #fff;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <div style="display: flex; flex-direction: column; align-items: center;">
+  <div class="container" style="gap: 24px;">
     <h1>Calculadora TSS República Dominicana</h1>
-    <div>
-      <div>
-        <label for="monthly-salary"><b>Salario Mensual en Pesos</b></label>
-        <br>
-        <input type="number" id="monthly-salary" />
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <div class="container box" style="width: calc(50% - 12px); gap: 10px;">
+        <div class="container">
+          <label for="monthly-salary"><b>Salario Mensual en Pesos</b></label>
+          <input type="number" id="monthly-salary" />
+        </div>
+        <div class="container">
+          <label for="other-remunerations"><b>Otras remuneraciones (Exento de SFS y AFP)</b></label>
+          <input type="number" id="other-remunerations" />
+        </div>
+        <div class="container">
+          <label for="sfs-dependents"><b>Cantidad de Dependientes SFS</b></label>
+          <input type="number" id="sfs-dependents" />
+        </div>
+        <button onclick="calculateTssDeductions()">
+          Calcular
+        </button>
       </div>
-      <br>
-      <div>
-        <label for="sfs-dependents"><b>Dependientes SFS</b></label>
-        <br>
-        <input type="number" id="sfs-dependents" />
+      <div class="container box" style="width: calc(50% - 12px);">
+        <p style="text-decoration: underline;"><b>RESULTADOS:</b></p>
+        <p><b>Seguro Familiar de Salud (SFS):</b> <span id="sfs"></span></p>
+        <p><b>Monto por Dependientes SFS:</b> <span id="sfs-dependents-deduction"></span></p>
+        <p><b>Administradora de Fondo de Pensiones (AFP):</b> <span id="afp"></span></p>
+        <p><b>Impuesto Sobre la Renta (ISR):</b> <span id="isr"></span></p>
+        <p><b>Retenciones:</b> <span id="deductions"></span></p>
+        <p><b>Salario Neto Mensual:</b> <span id="net-monthly-salary"></span></p>
+        <p><b>Salario Neto Quincenal:</b> <span id="net-biweekly-salary"></span></p>
       </div>
     </div>
-    <br>
-    <button onclick="calculateTssDeductions()">
-      Calcular
-    </button>
-    <br>
-    <p><b>Seguro Familiar de Salud (SFS):</b> <span id="sfs"></span></p>
-    <p><b>Dependientes SFS:</b> <span id="sfs-dependents-deduction"></span></p>
-    <p><b>Administradora de Fondo de Pensiones (AFP):</b> <span id="afp"></span></p>
-    <p><b>Impuesto Sobre la Renta (ISR):</b> <span id="isr"></span></p>
-    <p><b>Retenciones:</b> <span id="deductions"></span></p>
-    <p><b>Salario Neto Mensual:</b> <span id="net-monthly-salary"></span></p>
-    <p><b>Salario Neto Quincenal:</b> <span id="net-biweekly-salary"></span></p>
-  </div>
-  <div style="position: absolute; bottom: 34px; left: 50px">
-    <p><b>Salario Mínimo Cotizable Utilizado:</b> <span id="minimum-monthly-salary"></span></p>
-    <p><b>Porcentaje SFS:</b> <span id="sfs-rate"></span>%</p>
-    <p><b>Cantidad por Dependiente Adicional SFS:</b> <span id="sfs-dependents-fixed-amount"></span></p>
-    <p><b>Máximo SFS:</b> <span id="sfs-threshold"></span></p>
-    <p><b>Porcentaje AFP:</b> <span id="afp-rate"></span>%</p>
-    <p><b>Máximo AFP:</b> <span id="afp-threshold"></span></p>
-    <p><b>Última Actualización:</b> <span>15 de Julio del 2024</span></p>
+    <div class="container box">
+      <p><b>Salario Mínimo Cotizable Utilizado:</b> <span id="minimum-monthly-salary"></span></p>
+      <p><b>Porcentaje SFS:</b> <span id="sfs-rate"></span>%</p>
+      <p><b>Monto por Dependiente Adicional SFS:</b> <span id="sfs-dependents-fixed-amount"></span></p>
+      <p><b>Máximo SFS:</b> <span id="sfs-threshold"></span></p>
+      <p><b>Porcentaje AFP:</b> <span id="afp-rate"></span>%</p>
+      <p><b>Máximo AFP:</b> <span id="afp-threshold"></span></p>
+      <p><b>Última Actualización:</b> <span>11 de Junio del 2025</span></p>
+    </div>
   </div>
   <script type="text/javascript">
     const minimumMonthlySalary = 19352.50;
@@ -70,30 +119,28 @@
     };
 
     const minimumMonthlySalarySpan = document.getElementById('minimum-monthly-salary');
-    minimumMonthlySalarySpan.innerHTML = minimumMonthlySalary;
+    minimumMonthlySalarySpan.innerHTML = formatNumber(minimumMonthlySalary);
     const sfsRateSpan = document.getElementById('sfs-rate');
     sfsRateSpan.innerHTML = sfsRate * 100;
     const sfsDependentsFixedAmountSpan = document.getElementById('sfs-dependents-fixed-amount');
-    sfsDependentsFixedAmountSpan.innerHTML = sfsDependentsFixedAmount;
+    sfsDependentsFixedAmountSpan.innerHTML = formatNumber(sfsDependentsFixedAmount);
     const sfsThresholdSpan = document.getElementById('sfs-threshold');
-    sfsThresholdSpan.innerHTML = sfsThreshold;
+    sfsThresholdSpan.innerHTML = formatNumber(sfsThreshold);
     const afpRateSpan = document.getElementById('afp-rate');
     afpRateSpan.innerHTML = afpRate * 100;
     const afpThresholdSpan = document.getElementById('afp-threshold');
-    afpThresholdSpan.innerHTML = afpThreshold;
+    afpThresholdSpan.innerHTML = formatNumber(afpThreshold);
 
     function calculateTssDeductions() {
       const monthlySalary = Number(document.getElementById('monthly-salary').value);
-      if (typeof monthlySalary !== 'number') {
-        return null;
-      }
+      const otherRemunerations = Number(document.getElementById('other-remunerations').value);
       const sfsDependents = Number(document.getElementById('sfs-dependents').value);
 
       const sfs = (monthlySalary > sfsThreshold ? sfsThreshold : monthlySalary) * sfsRate;
       const sfsDependentsDeduction = sfsDependents * sfsDependentsFixedAmount;
       const afp = (monthlySalary > afpThreshold ? afpThreshold : monthlySalary) * afpRate;
       let isr = 0;
-      const netMonthlySalaryBeforeIsr = monthlySalary - sfs - sfsDependentsDeduction - afp;
+      const netMonthlySalaryBeforeIsr = (monthlySalary - sfs - sfsDependentsDeduction - afp) + (otherRemunerations);
 
       if (netMonthlySalaryBeforeIsr > isrScales.first.threshold && netMonthlySalaryBeforeIsr <= isrScales.second.threshold) {
         const exceeding = netMonthlySalaryBeforeIsr - isrScales.first.threshold;
@@ -107,22 +154,27 @@
       }
 
       const deductions = sfs + sfsDependentsDeduction + afp + isr;
-      const netMonthlySalary = monthlySalary - deductions;
+      const netMonthlySalary = monthlySalary - deductions + otherRemunerations;
+      const netBiweeklySalary = netMonthlySalary / 2;
 
       const sfsSpan = document.getElementById('sfs');
-      sfsSpan.innerHTML = sfs;
+      sfsSpan.innerHTML = formatNumber(sfs);
       const sfsDependentsDeductionSpan = document.getElementById('sfs-dependents-deduction');
-      sfsDependentsDeductionSpan.innerHTML = sfsDependentsDeduction;
+      sfsDependentsDeductionSpan.innerHTML = formatNumber(sfsDependentsDeduction);
       const afpSpan = document.getElementById('afp');
-      afpSpan.innerHTML = afp;
+      afpSpan.innerHTML = formatNumber(afp);
       const isrSpan = document.getElementById('isr');
-      isrSpan.innerHTML = isr;
+      isrSpan.innerHTML = formatNumber(isr);
       const deductionsSpan = document.getElementById('deductions');
-      deductionsSpan.innerHTML = deductions;
+      deductionsSpan.innerHTML = formatNumber(deductions);
       const netMonthlySalarySpan = document.getElementById('net-monthly-salary');
-      netMonthlySalarySpan.innerHTML = netMonthlySalary;
-      const netBiweeklySalary = document.getElementById('net-biweekly-salary');
-      netBiweeklySalary.innerHTML = netMonthlySalary / 2;
+      netMonthlySalarySpan.innerHTML = formatNumber(netMonthlySalary);
+      const netBiweeklySalarySpan = document.getElementById('net-biweekly-salary');
+      netBiweeklySalarySpan.innerHTML = formatNumber(netBiweeklySalary);
+    }
+
+    function formatNumber(number) {
+      return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(number);
     }
   </script>
 </body>
